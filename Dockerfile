@@ -1,4 +1,4 @@
-FROM ros:galactic-ros-core
+FROM ros:foxy-ros-core
 
 SHELL ["/bin/bash", "-c"]
 
