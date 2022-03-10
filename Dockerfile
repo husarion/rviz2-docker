@@ -4,6 +4,9 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install -y \
         ros-$ROS_DISTRO-rviz2 \
+        ros-$ROS_DISTRO-rviz-common \
+        ros-$ROS_DISTRO-rviz-default-plugins \
+        ros-$ROS_DISTRO-rviz-visual-tools \
         ros-$ROS_DISTRO-nav2-rviz-plugins && \
     rm -rf /var/lib/apt/lists/*
 
