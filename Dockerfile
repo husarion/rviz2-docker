@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
         ros-$ROS_DISTRO-rviz-visual-tools \
         ros-$ROS_DISTRO-nav2-rviz-plugins \
         ros-$ROS_DISTRO-rmw-fastrtps-cpp && \
-    apt-get upgrade && \
+    apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists/*
 
 ENV NVIDIA_VISIBLE_DEVICES \
