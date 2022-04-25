@@ -1,8 +1,9 @@
-FROM husarion/ros:galactic-ros-core
+FROM ros:galactic-ros-core
 
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install -y \
+        ros-$ROS_DISTRO-rmw-fastrtps-cpp \
         ros-$ROS_DISTRO-rviz2 \
         ros-$ROS_DISTRO-rviz-common \
         ros-$ROS_DISTRO-rviz-default-plugins \
@@ -10,6 +11,8 @@ RUN apt-get update && apt-get install -y \
         ros-$ROS_DISTRO-rviz-rendering \
         ros-$ROS_DISTRO-nav2-rviz-plugins && \
     apt-get upgrade -y && \
+    apt-get autoremove -y && \
+    apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 ENV NVIDIA_VISIBLE_DEVICES \

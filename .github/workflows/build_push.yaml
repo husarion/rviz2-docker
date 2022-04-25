@@ -35,6 +35,6 @@ jobs:
         file: ./Dockerfile
         platforms: linux/arm64, linux/amd64
         push: true
-        tags: husarion/rviz2:latest
-        cache-from: type=registry,ref=husarion/rviz2:latest
+        tags: husarion/rviz2:galactic
+        cache-from: type=registry,ref=husarion/rviz2:galactic
         cache-to: type=inline
