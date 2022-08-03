@@ -1,4 +1,6 @@
-FROM ros:galactic-ros-core
+ARG ROS_DISTRO=galactic
+
+FROM ros:$ROS_DISTRO-ros-core
 
 SHELL ["/bin/bash", "-c"]
 
