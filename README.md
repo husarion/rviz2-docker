@@ -1,11 +1,12 @@
 # rviz2-docker
 
-Prebuild Docker image with RViz2 and Nav2 plugin
+Building a Docker image with RViz2 and Nav2 plugin.
 
-## Usage
+Available for ROS distros:
+- ROS 2 galactic
+- ROS 2 humble
 
 Create the following `compose.yaml` file:
-
 ```yaml
 version: "2.3"
 
@@ -20,7 +21,7 @@ services:
       - DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-    volumes: 
+    volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ./rosbot_pro.rviz:/root/.rviz2/default.rviz
 ```
