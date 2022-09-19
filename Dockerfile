@@ -22,6 +22,9 @@ ENV NVIDIA_VISIBLE_DEVICES \
 ENV NVIDIA_DRIVER_CAPABILITIES \
     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
+COPY ./robot_models /robot_models
+COPY ./settings /settings
+
 ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
 CMD ["ros2", "run", "rviz2", "rviz2"]
