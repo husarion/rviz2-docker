@@ -43,7 +43,7 @@ jobs:
         cache-to: type=inline
 
     - name: Build and push (testing)
-      if: github.ref_name == 'main'
+      if: github.ref_name != 'main'
       uses: docker/build-push-action@v2
       with:
         platforms: linux/arm64, linux/amd64
