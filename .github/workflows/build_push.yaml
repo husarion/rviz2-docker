@@ -31,6 +31,9 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+    - name: Set SHORT_DATE env
+      run: echo "SHORT_DATE=$(date +%y-%m-%d)" >> $GITHUB_ENV
+
     - name: Build and push (production)
       if: github.ref_name == 'main'
       uses: docker/build-push-action@v2
@@ -38,7 +41,9 @@ jobs:
         platforms: linux/arm64, linux/amd64
         build-args: ROS_DISTRO=${{ matrix.ros-distro }}
         push: true
-        tags: husarion/rviz2:${{ matrix.ros-distro }}
+        tags: |
+          husarion/rviz2:${{ matrix.ros-distro }}
+          husarion/rviz2:${{ matrix.ros-distro }}-${{ env.SHORT_DATE }}
         cache-from: type=registry,ref=husarion/rviz2:${{ matrix.ros-distro }}
         cache-to: type=inline
 
