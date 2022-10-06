@@ -6,6 +6,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install -y \
         ros-$ROS_DISTRO-rmw-fastrtps-cpp \
+        ros-$ROS_DISTRO-teleop-twist-keyboard \
         ros-$ROS_DISTRO-rviz2 \
         ros-$ROS_DISTRO-rviz-common \
         ros-$ROS_DISTRO-rviz-default-plugins \
@@ -26,5 +27,7 @@ COPY ./robot_models /robot_models
 COPY ./settings /settings
 
 ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+
+RUN echo ". /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
 
 CMD ["ros2", "run", "rviz2", "rviz2"]
