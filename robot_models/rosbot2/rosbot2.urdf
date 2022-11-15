@@ -15,7 +15,7 @@
       <geometry>
         <mesh filename="file:///robot_models/rosbot2/meshes/body.stl" scale="0.001 0.001 0.001" />
       </geometry>
-      <origin rpy="1.5707963267948966 0.0 1.5707963267948966" xyz="0.0 0.0 -0.02" />
+      <origin rpy="1.5707963267948966 0.0 1.5707963267948966" xyz="0.0 0.0 -0.0173" />
       <material name="White">
         <color rgba="1.0 1.0 1.0 1.0" />
       </material>
@@ -35,7 +35,7 @@
     <material>Gazebo/White</material>
   </gazebo>
   <joint name="body_to_cover_joint" type="fixed">
-    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.060" />
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.0603" />
     <parent link="body_link" />
     <child link="cover_link" />
   </joint>
@@ -58,7 +58,7 @@
     </inertial>
   </link>
   <joint name="body_to_imu_joint" type="fixed">
-    <origin rpy="0.0 0.0 0.0" xyz="-0.1369 -0.0419 0.0370" />
+    <origin rpy="0.0 0.0 0.0" xyz="0.003 -0.0495 0.04332" />
     <parent link="body_link" />
     <child link="imu_link" />
   </joint>
@@ -81,28 +81,28 @@
   </link>
   <joint name="fl_range_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin rpy="0 0 0.13 " xyz="0.1 0.05 0.01" />
+    <origin rpy="0 0 0.218 " xyz="0.0926 0.05 0.015" />
     <parent link="body_link" />
     <child link="fl_range" />
   </joint>
   <link name="fl_range" />
   <joint name="fr_range_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin rpy="0 0 -0.13 " xyz="0.1 -0.05 0.01" />
+    <origin rpy="0 0 -0.218 " xyz="0.0926 -0.05 0.015" />
     <parent link="body_link" />
     <child link="fr_range" />
   </joint>
   <link name="fr_range" />
   <joint name="rl_range_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin rpy="0 0 3.01 " xyz="-0.1 0.05 0.01" />
+    <origin rpy="0 0 2.924 " xyz="-0.0926 0.05 0.0115" />
     <parent link="body_link" />
     <child link="rl_range" />
   </joint>
   <link name="rl_range" />
   <joint name="rr_range_joint" type="fixed">
     <axis xyz="0 1 0" />
-    <origin rpy="0 0 3.27 " xyz="-0.1 -0.05 0.01" />
+    <origin rpy="0 0 3.360" xyz="-0.0926 -0.05 0.0115" />
     <parent link="body_link" />
     <child link="rr_range" />
   </joint>
@@ -302,7 +302,7 @@
       <geometry>
         <mesh filename="file:///robot_models/rosbot2/meshes/rplidar.stl" scale="0.001 0.001 0.001" />
       </geometry>
-      <origin rpy="1.5707963267948966 0.0 1.5707963267948966" xyz="0.0 0.0 0.0" />
+      <origin rpy="1.5707963267948966 0.0 -1.5707963267948966" xyz="0.0 0.0 0.0" />
       <material name="Black">
         <color rgba="0.0 0.0 0.0 1.0" />
       </material>
@@ -377,7 +377,7 @@
       <geometry>
         <mesh filename="file:///robot_models/rosbot2/meshes/astra.stl" scale="0.001 0.001 0.001" />
       </geometry>
-      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="-0.01 0 0.025" />
+      <origin rpy="1.5707963267948966 0 1.5707963267948966" xyz="-0.01 0 0.0277" />
       <material name="Black">
         <color rgba="0.0 0.0 0.0 1.0" />
       </material>
