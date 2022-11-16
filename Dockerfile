@@ -31,6 +31,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install -y \
         ros-$ROS_DISTRO-rmw-fastrtps-cpp \
+        ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
         ros-$ROS_DISTRO-teleop-twist-keyboard \
         ros-$ROS_DISTRO-rviz2 \
         ros-$ROS_DISTRO-rviz-common \
