@@ -2,7 +2,10 @@
 set -e
 
 if [[ -v FASTRTPS_DEFAULT_PROFILES_FILE ]]; then
-    envsubst < $FASTRTPS_DEFAULT_PROFILES_FILE > $FASTRTPS_DEFAULT_PROFILES_FILE
+    auxfile="/dds-config-aux.xml"
+    cp --attributes-only --preserve $FASTRTPS_DEFAULT_PROFILES_FILE $auxfile
+    cat $FASTRTPS_DEFAULT_PROFILES_FILE | envsubst > $auxfile
+    export FASTRTPS_DEFAULT_PROFILES_FILE=$auxfile
 fi
 
 # setup ros environment
