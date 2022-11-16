@@ -38,7 +38,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         ros-$ROS_DISTRO-rviz-default-plugins \
         ros-$ROS_DISTRO-rviz-visual-tools \
         ros-$ROS_DISTRO-rviz-rendering \
-        ros-$ROS_DISTRO-nav2-rviz-plugins && \
+        ros-$ROS_DISTRO-nav2-rviz-plugins \
+		gettext-base && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
     apt-get clean && \
