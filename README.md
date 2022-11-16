@@ -7,23 +7,24 @@ Available for ROS distros:
 - ROS 2 humble
 
 Create the following `compose.yaml` file:
+
 ```yaml
 version: "2.3"
 
 services:
   rviz:
-    image: husarion/rviz2
+    image: husarion/rviz2:humble
     network_mode: host
     ipc: host
     runtime: nvidia
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./rosbot_pro.rviz:/root/.rviz2/default.rviz
     environment:
       - ROS_DOMAIN_ID=2
       - DISPLAY
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=all
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ./rosbot_pro.rviz:/root/.rviz2/default.rviz
 ```
 
 And execute

@@ -1,5 +1,30 @@
 ARG ROS_DISTRO=galactic
 
+FROM ros:$ROS_DISTRO-ros-base AS robot-models-builder
+
+# select bash as default shell
+SHELL ["/bin/bash", "-c"]
+
+WORKDIR /ros2_ws
+
+RUN apt update
+
+# install everything needed
+RUN mkdir src && \
+    git clone https://github.com/husarion/rosbot_ros.git src/rosbot_ros -b humble && \
+    git clone https://github.com/husarion/rosbot_xl_ros.git src/rosbot_xl_ros && \
+    git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
+    rm -rf \
+        src/rosbot_xl_ros/rosbot_bringup \
+        src/rosbot_xl_ros/rosbot_xl \
+        src/rosbot_xl_ros/rosbot_xl_bringup \
+        src/rosbot_xl_ros/rosbot_xl_gazebo \
+        src/rosbot_xl_ros/rosbot_xl_hardware && \
+    rosdep update --rosdistro $ROS_DISTRO && \
+    rosdep install --from-paths src --ignore-src -y && \
+    source /opt/ros/$ROS_DISTRO/setup.bash && \
+    colcon build --packages-select rosbot_description rosbot_xl_description ros_components_description
+
 FROM ros:$ROS_DISTRO-ros-core
 
 SHELL ["/bin/bash", "-c"]
@@ -23,11 +48,14 @@ ENV NVIDIA_VISIBLE_DEVICES \
 ENV NVIDIA_DRIVER_CAPABILITIES \
     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
 
-COPY ./robot_models /robot_models
 COPY ./settings /settings
+
+COPY --from=robot-models-builder /ros2_ws /ros2_ws
+COPY ./ros_entrypoint.sh /
 
 ENV RMW_IMPLEMENTATION=rmw_fastrtps_cpp
 
-RUN echo ". /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc
+RUN echo ". /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
+    echo ". /ros2_ws/install/setup.bash" >> ~/.bashrc
 
 CMD ["ros2", "run", "rviz2", "rviz2"]

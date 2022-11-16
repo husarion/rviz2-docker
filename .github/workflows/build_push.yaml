@@ -10,9 +10,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros-distro: [foxy, galactic, humble]
+        include:
+          - ros-distro: humble
+            platforms: "linux/amd64, linux/arm64"
+          - ros-distro: galactic
+            platforms: "linux/amd64, linux/arm64"
+          - ros-distro: foxy
+            platforms: "linux/amd64, linux/arm64"
 
     steps:
+
+    - name: Print event name
+      run: echo "Event name ${{ github.event_name }}"
+
+    - name: Print branch name
+      run: echo ${{ github.ref_name}}
+
+    - name: Set SHORT_DATE env
+      run: echo "SHORT_DATE=$(date +%y-%m-%d)" >> $GITHUB_ENV
+
     - name: Checkout
       uses: actions/checkout@v2
 
@@ -31,29 +47,34 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-    - name: Set SHORT_DATE env
-      run: echo "SHORT_DATE=$(date +%y-%m-%d)" >> $GITHUB_ENV
-
     - name: Build and push (production)
-      if: github.ref_name == 'main'
+      if: github.ref_name == 'main' && github.event_name == 'workflow_dispatch'
       uses: docker/build-push-action@v2
       with:
-        platforms: linux/arm64, linux/amd64
-        build-args: ROS_DISTRO=${{ matrix.ros-distro }}
+        platforms: ${{ matrix.platforms }}
         push: true
+        build-args: |
+          ROS_DISTRO=${{ matrix.ros-distro }}
         tags: |
           husarion/rviz2:${{ matrix.ros-distro }}
           husarion/rviz2:${{ matrix.ros-distro }}-${{ env.SHORT_DATE }}
-        cache-from: type=registry,ref=husarion/rviz2:${{ matrix.ros-distro }}
-        cache-to: type=inline
 
-    - name: Build and push (testing)
+    - name: Build and push (latest only)
+      if: github.ref_name == 'main' && github.event_name != 'workflow_dispatch'
+      uses: docker/build-push-action@v2
+      with:
+        platforms: ${{ matrix.platforms }}
+        push: true
+        build-args: |
+          ROS_DISTRO=${{ matrix.ros-distro }}
+        tags: husarion/rviz2:${{ matrix.ros-distro }}
+
+    - name: Build and push (development)
       if: github.ref_name != 'main'
       uses: docker/build-push-action@v2
       with:
-        platforms: linux/arm64, linux/amd64
-        build-args: ROS_DISTRO=${{ matrix.ros-distro }}-${{ github.head_ref || github.ref_name }} 
+        platforms: ${{ matrix.platforms }}
         push: true
-        tags: husarion/rviz2:${{ matrix.ros-distro }}
-        cache-from: type=registry,ref=husarion/rviz2:${{ matrix.ros-distro }}-${{ github.head_ref || github.ref_name }} 
-        cache-to: type=inline
+        build-args: |
+          ROS_DISTRO=${{ matrix.ros-distro }}
+        tags: husarion/rviz2:${{ matrix.ros-distro }}-${{ github.head_ref || github.ref_name }}
