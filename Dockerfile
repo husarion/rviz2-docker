@@ -29,7 +29,7 @@ FROM ros:$ROS_DISTRO-ros-core
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         ros-$ROS_DISTRO-rmw-fastrtps-cpp \
         ros-$ROS_DISTRO-rmw-cyclonedds-cpp \
         ros-$ROS_DISTRO-teleop-twist-keyboard \
