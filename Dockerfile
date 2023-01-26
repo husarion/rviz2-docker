@@ -51,6 +51,8 @@ COPY ./settings /settings
 
 COPY --from=robot-models-builder /ros2_ws /ros2_ws
 
+RUN echo $(dpkg -s ros-$ROS_DISTRO-rviz2 | grep 'Version' | sed -r 's/Version:\s([0-9]+.[0-9]+.[0-9]+).*/\1/g') >> /version.txt
+
 RUN echo ". /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
     echo ". /ros2_ws/install/setup.bash" >> ~/.bashrc
 

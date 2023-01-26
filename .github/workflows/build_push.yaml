@@ -1,8 +1,34 @@
-name: Build/Publish Docker Image
+name: Build/Publish Docker Image 
 
-on:
-  push:
+on: 
   workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Is it a \"development\" or a \"stable\" release?"
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - stable
+      target_distro:
+        description: "In case of \"stable\" release specify the ROS distro of the existing docker image (eg. humble)"
+        type: string
+        default: "ardent"
+      target_release:
+        description: "In case of \"stable\" release specify the version of the existing docker image (eg. 1.0.12)"
+        type: string
+        default: "0.0.0"
+      target_date:
+        description: "In case of \"stable\" release specify the date of the existing docker image in format YYYYMMDD (eg. 20220124)"
+        type: string
+        default: "20131206"
+  repository_dispatch:
+    types: [rebuild]
+  pull_request:
+    types:
+      - closed
+      - opened
 
 jobs:
   build:
@@ -10,71 +36,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - ros-distro: humble
-            platforms: "linux/amd64, linux/arm64"
-          - ros-distro: galactic
-            platforms: "linux/amd64, linux/arm64"
-          - ros-distro: foxy
-            platforms: "linux/amd64, linux/arm64"
+        ros_distro: ["humble", "galactic", "foxy"]
 
     steps:
 
-    - name: Print event name
-      run: echo "Event name ${{ github.event_name }}"
+      - name: Checkout
+        uses: actions/checkout@v2
 
-    - name: Print branch name
-      run: echo ${{ github.ref_name}}
-
-    - name: Set SHORT_DATE env
-      run: echo "SHORT_DATE=$(date +%y-%m-%d)" >> $GITHUB_ENV
-
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Set up QEMU
-      uses: docker/setup-qemu-action@v1
-
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
-      with:
-        version: latest
-
-    - name: Login to Docker Registry
-      uses: docker/login-action@v1
-      with:
-        registry: docker.io
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Build and push (production)
-      if: github.ref_name == 'main' && github.event_name == 'workflow_dispatch'
-      uses: docker/build-push-action@v2
-      with:
-        platforms: ${{ matrix.platforms }}
-        push: true
-        build-args: |
-          ROS_DISTRO=${{ matrix.ros-distro }}
-        tags: |
-          husarion/rviz2:${{ matrix.ros-distro }}
-          husarion/rviz2:${{ matrix.ros-distro }}-${{ env.SHORT_DATE }}
-
-    - name: Build and push (latest only)
-      if: github.ref_name == 'main' && github.event_name != 'workflow_dispatch'
-      uses: docker/build-push-action@v2
-      with:
-        platforms: ${{ matrix.platforms }}
-        push: true
-        build-args: |
-          ROS_DISTRO=${{ matrix.ros-distro }}
-        tags: husarion/rviz2:${{ matrix.ros-distro }}
-
-    - name: Build and push (development)
-      if: github.ref_name != 'main'
-      uses: docker/build-push-action@v2
-      with:
-        platforms: ${{ matrix.platforms }}
-        push: true
-        build-args: |
-          ROS_DISTRO=${{ matrix.ros-distro }}
-        tags: husarion/rviz2:${{ matrix.ros-distro }}-${{ github.head_ref || github.ref_name }}
+      - name: Build Docker Image
+        uses: husarion-ci/ros-docker-img-action@v0.2
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_token:  ${{ secrets.DOCKERHUB_TOKEN }}
+          build_type: ${{ inputs.build_type }}
+          ros_distro: ${{ matrix.ros_distro }}
+          platforms: "linux/amd64, linux/arm64"
+          # variables important only for stable release
+          target_distro: ${{ inputs.target_distro }}
+          target_release: ${{ inputs.target_release }}
+          target_date: ${{ inputs.target_date }}
