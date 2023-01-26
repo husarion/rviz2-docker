@@ -10,16 +10,26 @@ WORKDIR /ros2_ws
 RUN apt update
 
 # install everything needed
-RUN mkdir src && \
-    git clone https://github.com/husarion/rosbot_ros.git src/rosbot_ros -b humble && \
-    git clone https://github.com/husarion/rosbot_xl_ros.git src/rosbot_xl_ros && \
+# ROSbot 2
+RUN mkdir -p src/rosbot_ros && \
+    pushd src/rosbot_ros && \
+    git init && \
+    git remote add -f origin https://github.com/husarion/rosbot_ros.git && \
+    git sparse-checkout init && \
+    git sparse-checkout set "rosbot_description" && \
+    git pull origin humble && \
+    popd && \
+    # ROSbot XL
+    mkdir -p src/rosbot_xl_ros && \
+    pushd src/rosbot_xl_ros && \
+    git init && \
+    git remote add -f origin https://github.com/husarion/rosbot_xl_ros.git && \
+    git sparse-checkout init && \
+    git sparse-checkout set "rosbot_xl_description" && \
+    git pull origin master && \
+    popd && \
+    # ros components
     git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
-    rm -rf \
-        src/rosbot_xl_ros/rosbot_bringup \
-        src/rosbot_xl_ros/rosbot_xl \
-        src/rosbot_xl_ros/rosbot_xl_bringup \
-        src/rosbot_xl_ros/rosbot_xl_gazebo \
-        src/rosbot_xl_ros/rosbot_xl_hardware && \
     rosdep update --rosdistro $ROS_DISTRO && \
     rosdep install --from-paths src --ignore-src -y && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
