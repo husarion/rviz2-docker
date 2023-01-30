@@ -15,7 +15,10 @@ RUN mkdir src && \
     git clone https://github.com/husarion/rosbot_xl_ros.git src/rosbot_xl_ros && \
     git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
     rm -rf \
-        src/rosbot_xl_ros/rosbot_bringup \
+        src/rosbot_ros/rosbot \
+        src/rosbot_ros/rosbot_bringup \
+        src/rosbot_ros/rosbot_controller \
+        \
         src/rosbot_xl_ros/rosbot_xl \
         src/rosbot_xl_ros/rosbot_xl_bringup \
         src/rosbot_xl_ros/rosbot_xl_gazebo \
