@@ -42,7 +42,7 @@ RUN mkdir -p src/rosbot_ros && \
     rosdep update --rosdistro $ROS_DISTRO && \
     rosdep install --from-paths src --ignore-src -y && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build --packages-select rosbot_description rosbot_xl_description ros_components_description
+    colcon build
 
 FROM husarnet/ros:$ROS_DISTRO-ros-core
 
