@@ -1,4 +1,5 @@
-ARG ROS_DISTRO=galactic
+ARG ROS_DISTRO=humble
+ARG PREFIX=
 
 FROM ros:$ROS_DISTRO-ros-base AS robot-models-builder
 
@@ -35,7 +36,7 @@ RUN mkdir -p src/rosbot_ros && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
     colcon build --packages-select rosbot_description rosbot_xl_description ros_components_description
 
-FROM husarnet/ros:$ROS_DISTRO-ros-core
+FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-core
 
 SHELL ["/bin/bash", "-c"]
 
@@ -62,8 +63,5 @@ COPY ./settings /settings
 COPY --from=robot-models-builder /ros2_ws /ros2_ws
 
 RUN echo $(dpkg -s ros-$ROS_DISTRO-rviz2 | grep 'Version' | sed -r 's/Version:\s([0-9]+.[0-9]+.[0-9]+).*/\1/g') >> /version.txt
-
-RUN echo ". /opt/ros/$ROS_DISTRO/setup.bash" >> ~/.bashrc && \
-    echo ". /ros2_ws/install/setup.bash" >> ~/.bashrc
 
 CMD ["ros2", "run", "rviz2", "rviz2"]

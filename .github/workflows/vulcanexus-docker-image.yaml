@@ -1,4 +1,4 @@
-name: Build/Publish Docker Image 
+name: Build/Publish Vulcanexus Docker Image 
 
 on: 
   workflow_dispatch:
@@ -36,7 +36,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ros_distro: ["humble", "galactic", "foxy"]
+        ros_distro: ["humble"]
 
     steps:
 
@@ -44,13 +44,14 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build Docker Image
-        uses: husarion-ci/ros-docker-img-action@v0.2
+        uses: husarion-ci/ros-docker-img-action@v0.4
         with:
           dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
           dockerhub_token:  ${{ secrets.DOCKERHUB_TOKEN }}
           build_type: ${{ inputs.build_type }}
           ros_distro: ${{ matrix.ros_distro }}
           platforms: "linux/amd64, linux/arm64"
+          prefix: "vulcanexus-"
           # variables important only for stable release
           target_distro: ${{ inputs.target_distro }}
           target_release: ${{ inputs.target_release }}

@@ -1,0 +1,57 @@
+name: Build/Publish ROS Docker Image 
+
+on: 
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: "Is it a \"development\" or a \"stable\" release?"
+        required: true
+        default: 'development'
+        type: choice
+        options:
+          - development
+          - stable
+      target_distro:
+        description: "In case of \"stable\" release specify the ROS distro of the existing docker image (eg. humble)"
+        type: string
+        default: "ardent"
+      target_release:
+        description: "In case of \"stable\" release specify the version of the existing docker image (eg. 1.0.12)"
+        type: string
+        default: "0.0.0"
+      target_date:
+        description: "In case of \"stable\" release specify the date of the existing docker image in format YYYYMMDD (eg. 20220124)"
+        type: string
+        default: "20131206"
+  repository_dispatch:
+    types: [rebuild]
+  pull_request:
+    types:
+      - closed
+      - opened
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        ros_distro: ["humble", "galactic", "foxy"]
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build Docker Image
+        uses: husarion-ci/ros-docker-img-action@v0.4
+        with:
+          dockerhub_username: ${{ secrets.DOCKERHUB_USERNAME }}
+          dockerhub_token:  ${{ secrets.DOCKERHUB_TOKEN }}
+          build_type: ${{ inputs.build_type }}
+          ros_distro: ${{ matrix.ros_distro }}
+          platforms: "linux/amd64, linux/arm64"
+          # variables important only for stable release
+          target_distro: ${{ inputs.target_distro }}
+          target_release: ${{ inputs.target_release }}
+          target_date: ${{ inputs.target_date }}
