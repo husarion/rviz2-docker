@@ -31,10 +31,19 @@ RUN mkdir -p src/rosbot_ros && \
     popd && \
     # ros components
     git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
+    # OpenManipulatorX
+    mkdir -p src/open_manipulator_x && \
+    pushd src/open_manipulator_x && \
+    git init && \
+    git remote add -f origin https://github.com/husarion/open_manipulator_x.git && \
+    git sparse-checkout init && \
+    git sparse-checkout set "open_manipulator_x_description" && \
+    git pull origin main && \
+    popd && \
     rosdep update --rosdistro $ROS_DISTRO && \
     rosdep install --from-paths src --ignore-src -y && \
     source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build --packages-select rosbot_description rosbot_xl_description ros_components_description
+    colcon build
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-core
 
