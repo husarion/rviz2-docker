@@ -1,7 +1,7 @@
 ARG ROS_DISTRO=humble
 ARG PREFIX=
 
-FROM ros:${PREFIX}${ROS_DISTRO}-ros-base AS robot-models-builder
+FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-base AS robot-models-builder
 
 # select bash as default shell
 SHELL ["/bin/bash", "-c"]
