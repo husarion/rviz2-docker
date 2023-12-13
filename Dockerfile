@@ -6,6 +6,9 @@ FROM ros:$ROS_DISTRO-ros-base AS robot-models-builder
 # select bash as default shell
 SHELL ["/bin/bash", "-c"]
 
+ARG ROS_DISTRO
+ARG PREFIX
+
 WORKDIR /ros2_ws
 
 RUN apt update
@@ -42,8 +45,9 @@ RUN mkdir -p src/rosbot_ros && \
     popd && \
     rosdep update --rosdistro $ROS_DISTRO && \
     rosdep install --from-paths src --ignore-src -y && \
-    source /opt/ros/$ROS_DISTRO/setup.bash && \
-    colcon build
+    MYDISTRO=${PREFIX:-ros}; MYDISTRO=${MYDISTRO//-/} && \
+    source /opt/$MYDISTRO/$ROS_DISTRO/setup.bash && \
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-core
 
@@ -56,7 +60,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         ros-$ROS_DISTRO-rviz-default-plugins \
         ros-$ROS_DISTRO-rviz-visual-tools \
         ros-$ROS_DISTRO-rviz-rendering \
-        ros-$ROS_DISTRO-nav2-rviz-plugins && \
+        ros-$ROS_DISTRO-nav2-rviz-plugins \
+        # allows compressed and theora encoded streams to be received over image_transport
+        ros-$ROS_DISTRO-image-transport-plugins && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
     apt-get clean && \

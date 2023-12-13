@@ -2,12 +2,16 @@ version: "2.3"
 
 services:
   rviz:
-    image: husarion/rviz2:humble
+    # image: husarion/rviz2:humble
+    build:
+      context: ..
+      dockerfile: Dockerfile
     network_mode: host
     ipc: host
     runtime: nvidia
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - ./default.rviz:/root/.rviz2/default.rviz
     environment:
       - ROS_DOMAIN_ID
       - DISPLAY
