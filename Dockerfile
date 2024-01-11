@@ -11,7 +11,8 @@ ARG PREFIX
 
 WORKDIR /ros2_ws
 
-RUN apt update
+RUN apt update && apt install -y \
+        ros-$ROS_DISTRO-cv-bridge
 
 # install everything needed
 # ROSbot 2
@@ -34,6 +35,9 @@ RUN mkdir -p src/rosbot_ros && \
     popd && \
     # ros components
     git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
+    # ffmpeg image transport plugin
+    git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git src/ffmpeg_image_transport && \
+    vcs import src < src/ffmpeg_image_transport/ffmpeg_image_transport.repos && \
     # OpenManipulatorX
     mkdir -p src/open_manipulator_x && \
     pushd src/open_manipulator_x && \
@@ -61,6 +65,8 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         ros-$ROS_DISTRO-rviz-visual-tools \
         ros-$ROS_DISTRO-rviz-rendering \
         ros-$ROS_DISTRO-nav2-rviz-plugins \
+        # for ffmpeg image transport
+        ros-$ROS_DISTRO-cv-bridge \
         # allows compressed and theora encoded streams to be received over image_transport
         ros-$ROS_DISTRO-image-transport-plugins && \
     apt-get upgrade -y && \
