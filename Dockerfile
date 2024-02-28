@@ -9,45 +9,34 @@ SHELL ["/bin/bash", "-c"]
 ARG ROS_DISTRO
 ARG PREFIX
 
-WORKDIR /ros2_ws
-
 RUN apt update && apt install -y \
         ros-$ROS_DISTRO-cv-bridge
 
-# install everything needed
+WORKDIR /ros2_ws/src
+
+# Clone packages with descriptions
 # ROSbot 2
-RUN mkdir -p src/rosbot_ros && \
-    pushd src/rosbot_ros && \
-    git init && \
-    git remote add -f origin https://github.com/husarion/rosbot_ros.git && \
-    git sparse-checkout init && \
-    git sparse-checkout set "rosbot_description" && \
-    git pull origin humble && \
-    popd && \
+RUN git clone https://github.com/husarion/rosbot_ros.git && \
+    find rosbot_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_description' -exec rm -r {} + && \
     # ROSbot XL
-    mkdir -p src/rosbot_xl_ros && \
-    pushd src/rosbot_xl_ros && \
-    git init && \
-    git remote add -f origin https://github.com/husarion/rosbot_xl_ros.git && \
-    git sparse-checkout init && \
-    git sparse-checkout set "rosbot_xl_description" && \
-    git pull origin master && \
-    popd && \
+    git clone https://github.com/husarion/rosbot_xl_ros.git && \
+    find rosbot_xl_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_description' -exec rm -r {} + && \
+    # Panther
+    git clone -b ros2-devel https://github.com/husarion/panther_ros.git && \
+    find panther_ros -mindepth 1 -maxdepth 1 ! -name 'panther_description' -exec rm -r {} + && \
     # ros components
-    git clone https://github.com/husarion/ros_components_description.git src/ros_components_description -b ros2 && \
+    git clone https://github.com/husarion/ros_components_description.git && \
     # ffmpeg image transport plugin
-    git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git src/ffmpeg_image_transport && \
-    vcs import src < src/ffmpeg_image_transport/ffmpeg_image_transport.repos && \
+    git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git && \
+    vcs import . < ./ffmpeg_image_transport/ffmpeg_image_transport.repos && \
     # OpenManipulatorX
-    mkdir -p src/open_manipulator_x && \
-    pushd src/open_manipulator_x && \
-    git init && \
-    git remote add -f origin https://github.com/husarion/open_manipulator_x.git && \
-    git sparse-checkout init && \
-    git sparse-checkout set "open_manipulator_x_description" && \
-    git pull origin main && \
-    popd && \
-    rosdep update --rosdistro $ROS_DISTRO && \
+    git clone https://github.com/husarion/open_manipulator_x.git && \
+    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} +
+
+WORKDIR /ros2_ws
+
+# Build packages
+RUN rosdep update --rosdistro $ROS_DISTRO && \
     rosdep install --from-paths src --ignore-src -y && \
     MYDISTRO=${PREFIX:-ros}; MYDISTRO=${MYDISTRO//-/} && \
     source /opt/$MYDISTRO/$ROS_DISTRO/setup.bash && \
