@@ -2,15 +2,10 @@ ARG ROS_DISTRO=humble
 ARG PREFIX=
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-base AS robot-models-builder
-
-# select bash as default shell
 SHELL ["/bin/bash", "-c"]
 
 ARG ROS_DISTRO
 ARG PREFIX
-
-RUN apt update && apt install -y \
-        ros-$ROS_DISTRO-cv-bridge
 
 WORKDIR /ros2_ws/src
 
@@ -26,12 +21,15 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     find panther_ros -mindepth 1 -maxdepth 1 ! -name 'panther_description' -exec rm -r {} + && \
     # ros components
     git clone https://github.com/husarion/ros_components_description.git && \
-    # ffmpeg image transport plugin
-    git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git && \
-    vcs import . < ./ffmpeg_image_transport/ffmpeg_image_transport.repos && \
     # OpenManipulatorX
     git clone https://github.com/husarion/open_manipulator_x.git && \
     find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} +
+
+ # ffmpeg image transport plugin
+RUN apt update && apt install -y \
+        ros-$ROS_DISTRO-cv-bridge && \
+    git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git && \
+    vcs import . < ./ffmpeg_image_transport/ffmpeg_image_transport.repos
 
 WORKDIR /ros2_ws
 
@@ -43,7 +41,6 @@ RUN rosdep update --rosdistro $ROS_DISTRO && \
     colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-core
-
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -70,7 +67,7 @@ ENV NVIDIA_DRIVER_CAPABILITIES \
 
 COPY ./settings /settings
 
-COPY --from=robot-models-builder /ros2_ws /ros2_ws
+COPY --from=robot-models-builder /ros2_ws/install /ros2_ws/install
 
 RUN echo $(dpkg -s ros-$ROS_DISTRO-rviz2 | grep 'Version' | sed -r 's/Version:\s([0-9]+.[0-9]+.[0-9]+).*/\1/g') >> /version.txt
 
