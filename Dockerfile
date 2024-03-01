@@ -23,7 +23,10 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     git clone https://github.com/husarion/ros_components_description.git && \
     # OpenManipulatorX
     git clone https://github.com/husarion/open_manipulator_x.git && \
-    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} +
+    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} + && \
+    # DepthAI
+    git clone https://github.com/luxonis/depthai-ros.git && \
+    find depthai-ros -mindepth 1 -maxdepth 1 ! -name 'depthai_descriptions' -exec rm -r {} +
 
  # ffmpeg image transport plugin
 RUN apt update && apt install -y \
@@ -64,8 +67,6 @@ ENV NVIDIA_VISIBLE_DEVICES \
     ${NVIDIA_VISIBLE_DEVICES:-all}
 ENV NVIDIA_DRIVER_CAPABILITIES \
     ${NVIDIA_DRIVER_CAPABILITIES:+$NVIDIA_DRIVER_CAPABILITIES,}graphics
-
-COPY ./settings /settings
 
 COPY --from=robot-models-builder /ros2_ws/install /ros2_ws/install
 
