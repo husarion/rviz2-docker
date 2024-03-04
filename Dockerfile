@@ -23,12 +23,9 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     git clone https://github.com/husarion/ros_components_description.git && \
     # OpenManipulatorX
     git clone https://github.com/husarion/open_manipulator_x.git && \
-    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} + && \
-    # DepthAI
-    git clone https://github.com/luxonis/depthai-ros.git && \
-    find depthai-ros -mindepth 1 -maxdepth 1 ! -name 'depthai_descriptions' -exec rm -r {} +
+    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} +
 
- # ffmpeg image transport plugin
+# ffmpeg image transport plugin
 RUN apt update && apt install -y \
         ros-$ROS_DISTRO-cv-bridge && \
     git clone https://github.com/ros-misc-utilities/ffmpeg_image_transport.git && \
@@ -57,7 +54,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         # for ffmpeg image transport
         ros-$ROS_DISTRO-cv-bridge \
         # allows compressed and theora encoded streams to be received over image_transport
-        ros-$ROS_DISTRO-image-transport-plugins && \
+        ros-$ROS_DISTRO-image-transport-plugins \
+        # DepthAI
+        ros-$ROS_DISTRO-depthai-descriptions && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
     apt-get clean && \
