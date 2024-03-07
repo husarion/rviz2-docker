@@ -23,7 +23,10 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     git clone https://github.com/husarion/ros_components_description.git && \
     # OpenManipulatorX
     git clone https://github.com/husarion/open_manipulator_x.git && \
-    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} +
+    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} + && \
+    # ROSbot XL + manipulator setup
+    git clone https://github.com/husarion/rosbot_xl_manipulation_ros && \
+    find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_manipulation_description' -exec rm -r {} +
 
 # ffmpeg image transport plugin
 RUN apt update && apt install -y \
