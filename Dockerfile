@@ -1,11 +1,13 @@
 ARG ROS_DISTRO=humble
 ARG PREFIX=
+ARG MYDISTRO=ros
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-base AS robot-models-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG ROS_DISTRO
 ARG PREFIX
+ARG MYDISTRO
 
 WORKDIR /ros2_ws/src
 
@@ -26,7 +28,10 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} + && \
     # ROSbot XL + manipulator setup
     git clone https://github.com/husarion/rosbot_xl_manipulation_ros && \
-    find rosbot_xl_manipulation_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_manipulation_description' -exec rm -r {} +
+    find rosbot_xl_manipulation_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_manipulation_description' -exec rm -r {} + && \
+    # Luxonis cameras
+    git clone https://github.com/luxonis/depthai-ros.git  && \
+    find depthai-ros -mindepth 1 -maxdepth 1 ! -name 'depthai_descriptions' -exec rm -r {} +
 
 # ffmpeg image transport plugin
 RUN apt update && apt install -y \
@@ -57,9 +62,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
         # for ffmpeg image transport
         ros-$ROS_DISTRO-cv-bridge \
         # allows compressed and theora encoded streams to be received over image_transport
-        ros-$ROS_DISTRO-image-transport-plugins \
-        # DepthAI
-        ros-$ROS_DISTRO-depthai-descriptions && \
+        ros-$ROS_DISTRO-image-transport-plugins && \
     apt-get upgrade -y && \
     apt-get autoremove -y && \
     apt-get clean && \
