@@ -26,10 +26,10 @@ RUN git clone https://github.com/husarion/rosbot_ros.git && \
     find open_manipulator_x -mindepth 1 -maxdepth 1 ! -name 'open_manipulator_x_description' -exec rm -r {} + && \
     # ROSbot XL + manipulator setup
     git clone https://github.com/husarion/rosbot_xl_manipulation_ros && \
-    find rosbot_xl_manipulation_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_manipulation_description' -exec rm -r {} + &&
+    find rosbot_xl_manipulation_ros -mindepth 1 -maxdepth 1 ! -name 'rosbot_xl_manipulation_description' -exec rm -r {} + && \
     # Luxonis cameras
     git clone https://github.com/luxonis/depthai-ros.git && \
-    find depthai_descriptions -mindepth 1 -maxdepth 1 ! -name 'depthai_descriptions' -exec rm -r {} + &&
+    find depthai_descriptions -mindepth 1 -maxdepth 1 ! -name 'depthai_descriptions' -exec rm -r {} +
 
 # ffmpeg image transport plugin
 RUN apt update && apt install -y \
