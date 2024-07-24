@@ -1,11 +1,13 @@
 ARG ROS_DISTRO=humble
 ARG PREFIX=
+ARG MYDISTRO=ros
 
 FROM husarnet/ros:${PREFIX}${ROS_DISTRO}-ros-base AS robot-models-builder
 SHELL ["/bin/bash", "-c"]
 
 ARG ROS_DISTRO
 ARG PREFIX
+ARG MYDISTRO
 
 WORKDIR /ros2_ws/src
 
